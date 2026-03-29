@@ -39,6 +39,7 @@ app.post("/api/products", async (req, res) => {
   }
 });
 
+
 // 4. SEED ROUTE (Optional: Keep this if you just want to quickly add a test item via browser)
 app.get("/seed", async (req, res) => {
   try {
