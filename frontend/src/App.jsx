@@ -1,11 +1,7 @@
 import React, { useState, useEffect } from 'react';
+import { Toaster, toast } from 'react-hot-toast';
+import { API_URL } from './api';
 import AuthPage from './pages/AuthPage';
-import Navbar from './components/Navbar';
-import Hero from './components/Hero';
-import WeeklySale from './components/WeeklySale';
-import Footer from './components/Footer';
-import CartPanel from './components/CartPanel';
-import AdminDashboard from './pages/AdminDashboard';
 
 function App() {
   const [currentPage, setCurrentPage] = useState('home'); // home | admin | auth
@@ -14,10 +10,11 @@ function App() {
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [activeCategory, setActiveCategory] = useState('All');
 
   const fetchProducts = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/products');
+      const response = await fetch(`${API_URL}/products`);
       if (!response.ok) throw new Error('API request failed');
       const data = await response.json();
       setProducts(Array.isArray(data) ? data : []);
@@ -41,13 +38,17 @@ function App() {
       }
       return [...prev, { ...product, qty: 1 }];
     });
+    toast.success(`${product.name} added to cart!`, {
+      style: { borderRadius: '10px', background: '#1a1a2e', color: '#fff' }
+    });
   };
 
   // Filter products based on search input
-  const filteredProducts = products.filter(p => 
-    p.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
-    p.category.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredProducts = products.filter(p => {
+    const matchesSearch = p.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = activeCategory === 'All' || p.category === activeCategory;
+    return matchesSearch && matchesCategory;
+  });
 
   return (
     <div className="min-h-screen">
@@ -65,6 +66,8 @@ function App() {
             onCartClick={() => setIsCartOpen(true)}
             onLoginClick={() => setCurrentPage('auth')}
             onSearch={setSearchQuery} // Pass search handler
+            onCategoryChange={setActiveCategory}
+            activeCategory={activeCategory}
             user={user}
           />
           <main>
@@ -80,6 +83,7 @@ function App() {
         </>
       )}
       <CartPanel isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} cart={cart} setCart={setCart} />
+      <Toaster />
     </div>
   );
 }
