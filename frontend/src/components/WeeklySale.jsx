@@ -1,8 +1,8 @@
 import React from 'react';
 
-const WeeklySale = ({ products }) => {
+const WeeklySale = ({ products, onAddToCart }) => {
   // Fallback data if products haven't loaded from backend yet
-  const displayProducts = products.length > 0 ? products : [
+  const displayProducts = (products && products.length > 0) ? products : [
     { _id: '1', name: 'Premium Puffer Jacket', category: 'Jackets', price: 3200, salePrice: 2600, onSale: true, image: '' },
     { _id: '2', name: 'Winter Puffer Jacket', category: 'Winter Jackets', price: 3200, salePrice: 2600, onSale: true, image: '' },
     { _id: '3', name: 'Classic Hoodie', category: 'Hoodie', price: 3200, salePrice: 2600, onSale: true, image: '' },
@@ -18,8 +18,20 @@ const WeeklySale = ({ products }) => {
         {displayProducts.map((p) => (
           <div key={p._id} className="bg-white rounded-2xl overflow-hidden shadow-md hover:-translate-y-2 hover:shadow-xl transition-all duration-300 flex flex-col group">
             {/* Product Image Placeholder */}
-            <div className="aspect-square bg-[#edf6f9] flex items-center justify-center text-6xl text-[#00BCD4] group-hover:scale-105 transition-transform duration-500">
-              {p.image ? <img src={p.image} alt={p.name} className="w-full h-full object-cover" /> : '👕'}
+            <div className="aspect-square bg-[#edf6f9] overflow-hidden flex items-center justify-center group-hover:scale-105 transition-transform duration-500">
+              {p.image ? (
+                <img 
+                  src={p.image} 
+                  alt={p.name} 
+                  className="w-full h-full object-cover"
+                  onError={(e) => { e.target.src = 'https://via.placeholder.com/300?text=Senshi+Apparel'; }} 
+                />
+              ) : (
+                <div className="flex flex-col items-center text-teal-primary">
+                  <span className="text-5xl">👕</span>
+                  <span className="text-[10px] font-bold mt-2 uppercase">No Image</span>
+                </div>
+              )}
             </div>
 
             <div className="p-5 flex flex-col flex-1">
@@ -33,7 +45,7 @@ const WeeklySale = ({ products }) => {
                   <span className="text-xs text-gray-400 line-through">Rs. {p.price.toLocaleString()}</span>
                 )}
               </div>
-              <button className="w-full py-3 bg-[#00BCD4] text-white text-xs font-bold rounded-xl hover:bg-[#0097A7] active:scale-95 transition-all shadow-sm">
+              <button onClick={() => onAddToCart?.(p)} className="w-full py-3 bg-[#00BCD4] text-white text-xs font-bold rounded-xl hover:bg-[#0097A7] active:scale-95 transition-all shadow-sm">
                 Add to Cart
               </button>
             </div>
