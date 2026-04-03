@@ -44,6 +44,7 @@ const Hero = () => {
               Shop Now!!
             </button>
           </div>
+        </div>
 
         {/* Navigation Arrows */}
         <button onClick={prevSlide} className="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 bg-black/70 text-white rounded-full flex items-center justify-center hover:bg-black transition-colors">

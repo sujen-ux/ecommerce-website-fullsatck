@@ -1,8 +1,8 @@
 import React from 'react';
 import { ShoppingCart, Heart, Search } from 'lucide-react';
 
-const Navbar = ({ cartCount }) => {
-  const categories = ['Wardrobe', 'Accessories', "Kid's", 'Shoes', 'Make-up', 'Furniture'];
+const Navbar = ({ cartCount, onSearch, onCategoryChange, activeCategory }) => {
+  const categories = ['All', 'Wardrobe', 'Accessories', "Kid's", 'Shoes', 'Make-up', 'Furniture'];
 
   return (
     <header className="sticky top-0 z-50">
@@ -30,6 +30,7 @@ const Navbar = ({ cartCount }) => {
             type="text" 
             placeholder="Search the product..." 
             className="w-full pl-10 pr-4 py-2 bg-[#f5fafb] border border-gray-200 rounded-full text-sm outline-none focus:border-[#00BCD4]"
+            onChange={(e) => onSearch?.(e.target.value)}
           />
         </div>
 
@@ -52,7 +53,11 @@ const Navbar = ({ cartCount }) => {
       {/* Category Bar */}
       <div className="bg-[#00BCD4] flex justify-center py-2 shadow-inner">
         {categories.map(cat => (
-          <button key={cat} className="text-white px-6 py-1 text-sm font-medium hover:bg-black/10 transition-colors uppercase tracking-tight">
+          <button 
+            key={cat} 
+            onClick={() => onCategoryChange(cat)}
+            className={`text-white px-6 py-1 text-sm font-medium hover:bg-black/10 transition-colors uppercase tracking-tight ${activeCategory === cat ? 'bg-black/20' : ''}`}
+          >
             {cat}
           </button>
         ))}

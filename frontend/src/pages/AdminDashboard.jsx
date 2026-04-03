@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Package, Users, DollarSign, Tag, Plus, Edit, Trash2 } from 'lucide-react';
+import { API_URL } from '../api';
 import ProductModal from '../components/ProductModal'; // 1. Import the Modal
 
 const AdminDashboard = ({ products, onRefresh }) => {
@@ -11,8 +12,8 @@ const AdminDashboard = ({ products, onRefresh }) => {
     try {
       const isEdit = !!formData._id;
       const url = isEdit 
-        ? `http://localhost:5000/api/products/${formData._id}` 
-        : 'http://localhost:5000/api/products';
+        ? `${API_URL}/products/${formData._id}` 
+        : `${API_URL}/products`;
       
       const response = await fetch(url, {
         method: isEdit ? 'PUT' : 'POST',
