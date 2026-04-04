@@ -1,15 +1,23 @@
 import React, { useState, useEffect } from 'react';
 import { Toaster, toast } from 'react-hot-toast';
 import { API_URL } from './api';
+import Navbar from './components/Navbar';
+import Hero from './components/Hero';
+import WeeklySale from './components/WeeklySale';
+import Footer from './components/Footer';
+import CartPanel from './components/CartPanel';
 import AuthPage from './pages/AuthPage';
+import AdminDashboard from './pages/AdminDashboard';
+import Checkout from './pages/Checkout';
 
-function App() {
+function App () {
   const [currentPage, setCurrentPage] = useState('home'); // home | admin | auth
   const [searchQuery, setSearchQuery] = useState('');
   const [user, setUser] = useState(null);
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
+  const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [activeCategory, setActiveCategory] = useState('All');
 
   const fetchProducts = async () => {
@@ -50,6 +58,21 @@ function App() {
     return matchesSearch && matchesCategory;
   });
 
+  if (isCheckingOut) {
+    return (
+      <Checkout
+        cart={cart}
+        total={cart.reduce((s, i) => s + (i.salePrice || i.price) * i.qty, 0)}
+        onBack={() => setIsCheckingOut(false)}
+        onComplete={() => {
+          toast.success('Payment Successful! Order #1024 placed.');
+          setCart([]);
+          setIsCheckingOut(false);
+        }}
+      />
+    );
+  }
+
   return (
     <div className="min-h-screen">
       {currentPage === 'auth' ? (
@@ -82,7 +105,13 @@ function App() {
           <Footer onAdminClick={() => setCurrentPage('admin')} />
         </>
       )}
-      <CartPanel isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} cart={cart} setCart={setCart} />
+      <CartPanel
+        isOpen={isCartOpen}
+        onClose={() => setIsCartOpen(false)}
+        onCheckout={() => setIsCheckingOut(true)}
+        cart={cart}
+        setCart={setCart}
+      />
       <Toaster />
     </div>
   );
