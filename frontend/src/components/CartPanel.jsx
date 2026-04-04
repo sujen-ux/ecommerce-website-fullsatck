@@ -1,7 +1,7 @@
 import React from 'react';
 import { X, Plus, Minus, Trash2 } from 'lucide-react';
 
-const CartPanel = ({ isOpen, onClose, cart, setCart }) => {
+const CartPanel = ({ isOpen, onClose, onCheckout, cart, setCart }) => {
   const total = cart.reduce((sum, item) => sum + (item.salePrice || item.price) * item.qty, 0);
 
   const updateQty = (id, delta) => {
@@ -56,7 +56,13 @@ const CartPanel = ({ isOpen, onClose, cart, setCart }) => {
               <span>Total</span>
               <span>Rs. {total.toLocaleString()}</span>
             </div>
-            <button className="w-full py-4 bg-black text-white font-bold rounded-xl hover:bg-teal-dark transition-all">
+            <button
+              onClick={() => {
+                onClose();
+                onCheckout();
+              }}
+              className="w-full py-4 bg-black text-white font-bold rounded-xl hover:bg-teal-dark transition-all"
+            >
               Proceed to Checkout
             </button>
           </div>
