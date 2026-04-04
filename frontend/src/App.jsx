@@ -16,9 +16,27 @@ function App () {
   const [user, setUser] = useState(null);
   const [products, setProducts] = useState([]);
   const [cart, setCart] = useState([]);
+  const [orders, setOrders] = useState([]);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
   const [activeCategory, setActiveCategory] = useState('All');
+
+  const completeOrder = (orderDetails) => {
+    const newOrder = {
+      id: `ORD-${Date.now()}`,
+      date: new Date().toLocaleDateString(),
+      items: cart,
+      total: cart.reduce((s, i) => s + (i.salePrice || i.price) * i.qty, 0),
+      status: 'Pending',
+      customer: orderDetails.name
+    };
+
+    setOrders([newOrder, ...orders]);
+    // In Phase 3, we will add: await api.post('/orders', newOrder);
+    setCart([]);
+    setIsCheckingOut(false);
+    toast.success('Order Placed Successfully!');
+  };
 
   const fetchProducts = async () => {
     try {
@@ -64,11 +82,7 @@ function App () {
         cart={cart}
         total={cart.reduce((s, i) => s + (i.salePrice || i.price) * i.qty, 0)}
         onBack={() => setIsCheckingOut(false)}
-        onComplete={() => {
-          toast.success('Payment Successful! Order #1024 placed.');
-          setCart([]);
-          setIsCheckingOut(false);
-        }}
+        onComplete={() => completeOrder({ name: user?.name || 'Guest' })}
       />
     );
   }
@@ -81,7 +95,7 @@ function App () {
           onBack={() => setCurrentPage('home')} 
         />
       ) : currentPage === 'admin' ? (
-        <AdminDashboard products={products} onRefresh={fetchProducts} />
+        <AdminDashboard products={products} orders={orders} onRefresh={fetchProducts} />
       ) : (
         <>
           <Navbar 
